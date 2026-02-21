@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
-import { Menu, X, Car, User, LogOut, LayoutDashboard, ChevronDown, Sparkles } from 'lucide-react'
+import { Menu, X, Car, User, LogOut, LayoutDashboard, ChevronDown } from 'lucide-react'
 
 export default function Navbar() {
   const { data: session, status } = useSession()
@@ -130,11 +130,11 @@ export default function Navbar() {
               </div>
             ) : (
               <button
-                onClick={() => signIn('google')}
+                onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
                 className="btn-primary flex items-center gap-2 text-sm"
               >
-                <Sparkles className="w-4 h-4" />
-                Get Started
+                <User className="w-4 h-4" />
+                Login
               </button>
             )}
           </div>
@@ -212,11 +212,11 @@ export default function Navbar() {
                 </>
               ) : (
                 <button
-                  onClick={() => signIn('google')}
+                  onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
                   className="btn-primary w-full flex items-center justify-center gap-2"
                 >
-                  <Sparkles className="w-4 h-4" />
-                  Get Started
+                  <User className="w-4 h-4" />
+                  Login
                 </button>
               )}
             </div>

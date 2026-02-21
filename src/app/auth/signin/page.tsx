@@ -4,8 +4,9 @@ import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import { Car, ArrowLeft, Sparkles, Shield, Zap } from 'lucide-react'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
-export default function SignInPage() {
+function SignInContent() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
   const error = searchParams.get('error')
@@ -143,5 +144,21 @@ export default function SignInPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+function SignInLoading() {
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-600 rounded-full animate-spin" />
+    </div>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<SignInLoading />}>
+      <SignInContent />
+    </Suspense>
   )
 }
