@@ -1,0 +1,308 @@
+{
+  "vehicles": [
+    {
+      "id": "S",
+      "brand": "Toyota",
+      "model": "Raize Hybrid Z",
+      "year": 2025,
+      "mileage": 0,
+      "transmission": "Automatic",
+      "fuelType": "Hybrid",
+      "images": [
+        "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800",
+        "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=800"
+      ],
+      "importStatus": "sold",
+      "receivedStatus": "received",
+      "engineCapacity": "1.2L",
+      "color": "Pearl White",
+      "grade": "S",
+      "features": ["Cruise Control", "Reverse Camera", "Bluetooth", "Climate Control"],
+      "description": "Excellent condition Toyota Prius with low mileage. Perfect for fuel economy."
+    },
+    {
+      "id": "2",
+      "brand": "Honda",
+      "model": "Vezel",
+      "year": 2025,
+      "mileage": 0,
+      "transmission": "Automatic",
+      "fuelType": "Hybrid",
+      "images": [
+        "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800",
+        "https://images.unsplash.com/photo-1619405399517-d7fce0f13302?w=800"
+      ],
+      "importStatus": "sold",
+      "receivedStatus": "shipping",
+      "engineCapacity": "1.5L",
+      "color": "Crystal Black",
+      "grade": "S",
+      "features": ["Honda Sensing", "Panoramic Sunroof", "Leather Seats", "Wireless Charging"],
+      "estimatedArrival": "2026-03-15",
+      "description": "Sporty Honda Vezel with all modern safety features."
+    },
+    {
+      "id": "3",
+      "brand": "Mazda",
+      "model": "CX-5",
+      "year": 2024,
+      "mileage": 1000,
+      "transmission": "Automatic",
+      "fuelType": "Petrol",
+      "images": [
+        "https://images.unsplash.com/photo-1620674156044-52b714665d46?w=800",
+        "https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=800"
+      ],
+      "importStatus": "sold",
+      "receivedStatus": "auction",
+      "engineCapacity": "2.5L",
+      "color": "Soul Red",
+      "grade": "S",
+      "features": ["BOSE Sound System", "Heads-Up Display", "360° Camera", "Adaptive Cruise"],
+      "estimatedArrival": "2026-04-01",
+      "description": "Premium Mazda CX-5 with the distinctive Kodo design."
+    },
+    {
+      "id": "4",
+      "brand": "Nissan",
+      "model": "X-Trail",
+      "year": 2024,
+      "mileage": 2000,
+      "transmission": "Automatic",
+      "fuelType": "Hybrid",
+      "images": [
+        "https://images.unsplash.com/photo-1619405399517-d7fce0f13302?w=800"
+      ],
+      "importStatus": "available",
+      "receivedStatus": "customs",
+      "engineCapacity": "2.0L",
+      "color": "Pearl White",
+      "grade": "5",
+      "features": ["ProPILOT", "Third Row Seating", "Around View Monitor", "Intelligent Key"],
+      "estimatedArrival": "2026-03-01",
+      "description": "Family-friendly Nissan X-Trail with 7 seats."
+    },
+    {
+      "id": "5",
+      "brand": "Toyota",
+      "model": "Land Cruiser Prado",
+      "year": 2025,
+      "mileage": 45000,
+      "transmission": "Automatic",
+      "fuelType": "Diesel",
+      "images": [
+        "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800"
+      ],
+      "importStatus": "sold",
+      "receivedStatus": "received",
+      "engineCapacity": "2.8L",
+      "color": "Super White",
+      "grade": "S",
+      "features": ["4WD", "Crawl Control", "Multi-Terrain Select", "Kinetic Dynamic Suspension"],
+      "description": "Legendary Toyota Prado for the ultimate adventure."
+    },
+    {
+      "id": "6",
+      "brand": "Suzuki",
+      "model": "Swift",
+      "year": 2024,
+      "mileage": 100,
+      "transmission": "Automatic",
+      "fuelType": "Petrol",
+      "images": [
+        "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800"
+      ],
+      "importStatus": "available",
+      "receivedStatus": "received",
+      "engineCapacity": "1.2L",
+      "color": "Speedy Blue",
+      "grade": "6",
+      "features": ["Apple CarPlay", "Android Auto", "LED Headlights", "Push Start"],
+      "description": "Fun and economical Suzuki Swift perfect for city driving."
+    }
+  ],
+  "reviews": [
+    {
+      "id": "1",
+      "customerName": "Kamal Perera",
+      "vehiclePurchased": "2022 Toyota Prius",
+      "rating": 5,
+      "reviewMessage": "Excellent service from start to finish! The team kept me updated throughout the entire import process. My Prius arrived in perfect condition.",
+      "purchaseDate": "2025-12-15",
+      "isVerified": true
+    },
+    {
+      "id": "2",
+      "customerName": "Nimal Silva",
+      "vehiclePurchased": "2021 Honda Vezel",
+      "rating": 5,
+      "reviewMessage": "Very professional and transparent. The calculator tool helped me plan my budget accurately. Highly recommend!",
+      "purchaseDate": "2025-11-20",
+      "isVerified": true
+    },
+    {
+      "id": "3",
+      "customerName": "Sachini Fernando",
+      "vehiclePurchased": "2023 Mazda CX-5",
+      "rating": 4,
+      "reviewMessage": "Great experience overall. The vehicle arrived a bit later than expected but the quality exceeded my expectations.",
+      "purchaseDate": "2025-10-10",
+      "isVerified": true
+    },
+    {
+      "id": "4",
+      "customerName": "Ruwan Jayasinghe",
+      "vehiclePurchased": "2022 Nissan X-Trail",
+      "rating": 5,
+      "reviewMessage": "This was my first time importing a vehicle and Carz made it incredibly easy. Their step-by-step guidance was invaluable.",
+      "purchaseDate": "2025-09-05",
+      "isVerified": true
+    },
+    {
+      "id": "5",
+      "customerName": "Dilshan Wickramasinghe",
+      "vehiclePurchased": "2021 Toyota Land Cruiser Prado",
+      "rating": 5,
+      "reviewMessage": "Premium service for a premium vehicle. Worth every rupee. The documentation was handled flawlessly.",
+      "purchaseDate": "2025-08-22",
+      "isVerified": true
+    },
+    {
+      "id": "6",
+      "customerName": "Amaya Senanayake",
+      "vehiclePurchased": "2023 Suzuki Swift",
+      "rating": 4,
+      "reviewMessage": "Good communication and fair pricing. The online tracking was very helpful to see where my car was at each stage.",
+      "purchaseDate": "2025-07-18",
+      "isVerified": true
+    }
+  ],
+  "faqs": [
+    {
+      "question": "How long does the import process take?",
+      "answer": "The typical import process takes 4-8 weeks from auction purchase to delivery in Sri Lanka. This includes auction, shipping (2-3 weeks), customs clearance (1-2 weeks), and final delivery."
+    },
+    {
+      "question": "What documents are required for vehicle import?",
+      "answer": "You will need your NIC/Passport copy, Vehicle Import License (if applicable), Bank documents for payment verification, and completed import declaration forms. We assist with all documentation."
+    },
+    {
+      "question": "Do you offer financing options?",
+      "answer": "Yes, we partner with leading banks in Sri Lanka to offer competitive financing options. We can arrange up to 70% financing for qualified buyers with flexible repayment terms."
+    },
+    {
+      "question": "How do I track my vehicle?",
+      "answer": "Once logged into your dashboard, you can track your vehicle in real-time. We provide updates at every stage - from auction purchase, shipping, port arrival, customs clearance, to final delivery."
+    },
+    {
+      "question": "What warranty do you provide?",
+      "answer": "All our vehicles come with a comprehensive inspection report. We offer a 6-month engine and transmission warranty on selected vehicles. Extended warranty packages are also available."
+    },
+    {
+      "question": "Can I choose a specific vehicle from Japanese auctions?",
+      "answer": "Absolutely! We can bid on specific vehicles based on your requirements. Share your preferences (make, model, year, budget) and we'll find matching vehicles at upcoming auctions."
+    }
+  ],
+  "processSteps": [
+    {
+      "step": 1,
+      "title": "Requirement Identification",
+      "description": "We begin with discussing the requirement, budget and select the vehicle.",
+      "icon": "Search"
+    },
+    {
+      "step": 2,
+      "title": "Estimate Price",
+      "description": "After requirement gathering, we will analyse the recent auction prices, taxes and other information and share the estimate import price.",
+      "icon": "Calculator"
+    },
+    {
+      "step": 3,
+      "title": "Advance Payment",
+      "description": "An advance payment is required to proceed with the confirmation.",
+      "icon": "CreditCard"
+    },
+    {
+      "step": 4,
+      "title": "Auction Bidding & Purchasing",
+      "description": "We'll start bidding in auctions or purchasing the vehicle directly from dealers within a two weeks period. If we couldn't secure the vehicle at the price we agreed within two weeks, we'll refund the advance payment.",
+      "icon": "Gavel"
+    },
+    {
+      "step": 5,
+      "title": "Open the LC",
+      "description": "We'll provide the auction images, auction sheets and proforma invoice and you can open the LC from any bank as you prefer.",
+      "icon": "FileText"
+    },
+    {
+      "step": 6,
+      "title": "Arrange the Shipment",
+      "description": "Shipment arranged within 2-4 weeks after the LC confirmation. During this period, vehicle will arrive to Japan port yards and inspection process will commence. We'll share the yard photos and the inspection certificate once those are done.",
+      "icon": "Package"
+    },
+    {
+      "step": 7,
+      "title": "Shipping and Arrival",
+      "description": "Vehicle will arrive to Hambantota port within 2 weeks after the ship departs from Japan.",
+      "icon": "Ship"
+    },
+    {
+      "step": 8,
+      "title": "Customs Clearance",
+      "description": "Once the vehicle documents arrive to the bank, we can start the customs clearance process. At this stage, you can make the import duty payment directly to Sri Lanka Customs.",
+      "icon": "Shield"
+    },
+    {
+      "step": 9,
+      "title": "Vehicle Delivery",
+      "description": "Finally we can collect the vehicle from Hambantota port and deliver your dream car!",
+      "icon": "Car"
+    }
+  ],
+  "features": [
+    {
+      "title": "Trusted Import Partner",
+      "description": "Over 10 years of experience importing premium vehicles from Japan.",
+      "icon": "Award"
+    },
+    {
+      "title": "Transparent Pricing",
+      "description": "No hidden fees. Get complete cost breakdown before you commit.",
+      "icon": "Receipt"
+    },
+    {
+      "title": "End-to-End Handling",
+      "description": "From auction to your doorstep, we manage everything.",
+      "icon": "Workflow"
+    },
+    {
+      "title": "Verified Suppliers",
+      "description": "We work only with certified and trusted auction houses.",
+      "icon": "BadgeCheck"
+    },
+    {
+      "title": "Secure Payments",
+      "description": "Multiple secure payment options with bank partnerships.",
+      "icon": "Lock"
+    },
+    {
+      "title": "24/7 Support",
+      "description": "Dedicated support team available round the clock.",
+      "icon": "Headphones"
+    }
+  ],
+  "filterOptions": {
+    "brands": ["Toyota", "Honda", "Nissan", "Mazda", "Suzuki", "Mitsubishi", "Subaru", "Lexus", "BMW", "Mercedes-Benz"],
+    "years": [2024, 2023, 2022, 2021, 2020, 2019, 2018],
+    "transmissions": ["Automatic", "Manual"],
+    "fuelTypes": ["Petrol", "Diesel", "Hybrid", "Electric"],
+    "priceRanges": [
+      { "label": "Under 3M", "min": 0, "max": 3000000 },
+      { "label": "3M - 5M", "min": 3000000, "max": 5000000 },
+      { "label": "5M - 8M", "min": 5000000, "max": 8000000 },
+      { "label": "8M - 15M", "min": 8000000, "max": 15000000 },
+      { "label": "Above 15M", "min": 15000000, "max": 999999999 }
+    ],
+    "importStatus": ["available", "reserved", "sold"]
+  }
+}
