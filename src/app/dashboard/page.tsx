@@ -43,7 +43,7 @@ export default function DashboardPage() {
   }
 
   if (!session) {
-    redirect('/api/auth/signin')
+    redirect('/auth/signin')
   }
 
   // For demo, using mock data

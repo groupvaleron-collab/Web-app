@@ -4,24 +4,13 @@ import GoogleProvider from 'next-auth/providers/google'
 export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
   callbacks: {
     async session({ session, token }) {
-      if (session?.user) {
-        (session.user as any).id = token.sub
-        // You can add role checking here
-        (session.user as any).role = 'user' // Default role
-      }
       return session
-    },
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-      }
-      return token
     },
   },
   pages: {
@@ -31,6 +20,7 @@ export const authOptions: AuthOptions = {
   session: {
     strategy: 'jwt',
   },
+  secret: process.env.NEXTAUTH_SECRET,
 }
 
 const handler = NextAuth(authOptions)
