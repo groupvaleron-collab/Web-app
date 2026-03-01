@@ -213,6 +213,16 @@ export default function DashboardPage() {
     }
   }, [status]);
 
+  // Sync viewing stage with current stage when order changes
+  useEffect(() => {
+    if (selectedOrder) {
+      const stages = selectedOrder.stages?.sort((a, b) => (a.stage_master?.stage_order || 0) - (b.stage_master?.stage_order || 0)) || [];
+      const pendingIndex = stages.findIndex(s => s.status === 'pending');
+      const currentIdx = pendingIndex === -1 ? stages.length : pendingIndex;
+      setViewingStageIndex(Math.min(currentIdx, 9));
+    }
+  }, [selectedOrder?.id]);
+
   const fetchOrders = async () => {
     try {
       setLoading(true);
@@ -510,101 +520,84 @@ export default function DashboardPage() {
 
                   {selectedOrder && (
                     <>
-                      {/* Single Stage View with Navigation */}
-                      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                        {/* Header with Navigation */}
-                        <div className="p-6 border-b border-gray-100">
+                      {/* Stage Tracker */}
+                      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                        {/* Simple Timeline Header */}
+                        <div className="p-5 border-b border-gray-100">
                           <div className="flex items-center justify-between mb-4">
-                            <div>
-                              <h3 className="text-xl font-bold text-gray-900">Import Pipeline</h3>
-                              <p className="text-gray-500 text-sm mt-1">Track your vehicle's journey from Japan to Sri Lanka</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <div className="flex items-center gap-2 text-sm">
-                                <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" />
-                                <span className="text-gray-600">Completed</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-sm">
-                                <div className="w-3 h-3 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full animate-pulse" />
-                                <span className="text-gray-600">In Progress</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-sm">
-                                <div className="w-3 h-3 bg-gray-200 rounded-full" />
-                                <span className="text-gray-600">Pending</span>
-                              </div>
-                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900">Order Progress</h3>
+                            <span className="text-sm text-gray-500">{getCurrentStageIndex()} of 10 completed</span>
                           </div>
                           
-                          {/* Progress Bar with Stage Dots */}
-                          <div className="relative">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-sm font-medium text-gray-700">Progress</span>
-                              <span className="text-sm font-bold text-primary-600">{((getCurrentStageIndex() / 10) * 100).toFixed(0)}% Complete</span>
-                            </div>
-                            <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
-                              <div 
-                                className="absolute left-0 top-0 h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all duration-700"
-                                style={{ width: `${(getCurrentStageIndex() / 10) * 100}%` }}
-                              />
-                            </div>
-                            {/* Stage Indicator Dots */}
-                            <div className="flex justify-between mt-2 px-1">
-                              {STAGE_ORDER.map((_, idx) => {
-                                const orderStage = getOrderStages()[idx];
-                                const isCompleted = orderStage?.status === 'completed';
-                                const isCurrent = idx === getCurrentStageIndex();
-                                const isViewing = idx === viewingStageIndex;
-                                return (
-                                  <button
-                                    key={idx}
-                                    onClick={() => setViewingStageIndex(idx)}
-                                    className={`w-6 h-6 rounded-full text-xs font-bold transition-all duration-200 ${
-                                      isCompleted 
-                                        ? 'bg-green-500 text-white hover:bg-green-600' 
-                                        : isCurrent 
-                                          ? 'bg-primary-500 text-white hover:bg-primary-600' 
-                                          : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
-                                    } ${isViewing ? 'ring-2 ring-offset-2 ring-primary-400 scale-110' : ''}`}
-                                  >
-                                    {idx + 1}
-                                  </button>
-                                );
-                              })}
-                            </div>
+                          {/* Simple Progress Dots */}
+                          <div className="flex items-center gap-1">
+                            {STAGE_ORDER.map((stage, idx) => {
+                              const orderStage = getOrderStages()[idx];
+                              const isCompleted = orderStage?.status === 'completed';
+                              const isCurrent = idx === getCurrentStageIndex();
+                              const isViewing = idx === viewingStageIndex;
+                              return (
+                                <button
+                                  key={idx}
+                                  onClick={() => setViewingStageIndex(idx)}
+                                  className={`flex-1 h-2 rounded-full transition-all ${
+                                    isCompleted 
+                                      ? 'bg-green-500' 
+                                      : isCurrent 
+                                        ? 'bg-blue-500' 
+                                        : 'bg-gray-200'
+                                  } ${isViewing ? 'ring-2 ring-offset-1 ring-gray-400' : 'hover:opacity-80'}`}
+                                  title={stage.name}
+                                />
+                              );
+                            })}
                           </div>
                         </div>
 
-                        {/* Stage Navigation Controls */}
-                        <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100/50 border-b border-gray-100 flex items-center justify-between">
+                        {/* Navigation */}
+                        <div className="px-5 py-4 bg-gray-50 flex items-center justify-between">
                           <button
                             onClick={() => setViewingStageIndex(Math.max(0, viewingStageIndex - 1))}
                             disabled={viewingStageIndex === 0}
-                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all ${
+                            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                               viewingStageIndex === 0 
-                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                                : 'bg-white text-gray-700 hover:bg-primary-50 hover:text-primary-700 border border-gray-200 shadow-sm'
+                                ? 'text-gray-400 cursor-not-allowed' 
+                                : 'text-gray-700 hover:bg-gray-200'
                             }`}
                           >
-                            <ChevronLeft className="w-5 h-5" />
+                            <ChevronLeft className="w-4 h-4" />
                             Previous
                           </button>
                           
                           <div className="text-center">
-                            <p className="text-lg font-bold text-gray-900">Stage {viewingStageIndex + 1} of 10</p>
-                            <p className="text-sm text-gray-500">{STAGE_ORDER[viewingStageIndex]?.name}</p>
+                            <span className={`inline-block px-2.5 py-0.5 rounded text-xs font-medium mb-1 ${
+                              getOrderStages()[viewingStageIndex]?.status === 'completed'
+                                ? 'bg-green-100 text-green-700'
+                                : viewingStageIndex === getCurrentStageIndex()
+                                  ? 'bg-blue-100 text-blue-700'
+                                  : 'bg-gray-100 text-gray-600'
+                            }`}>
+                              {getOrderStages()[viewingStageIndex]?.status === 'completed'
+                                ? 'Done'
+                                : viewingStageIndex === getCurrentStageIndex()
+                                  ? 'Current'
+                                  : 'Upcoming'}
+                            </span>
+                            <p className="font-semibold text-gray-900">{STAGE_ORDER[viewingStageIndex]?.name}</p>
+                            <p className="text-xs text-gray-500">Stage {viewingStageIndex + 1}</p>
                           </div>
                           
                           <button
                             onClick={() => setViewingStageIndex(Math.min(9, viewingStageIndex + 1))}
                             disabled={viewingStageIndex === 9}
-                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all ${
+                            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                               viewingStageIndex === 9 
-                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                                : 'bg-white text-gray-700 hover:bg-primary-50 hover:text-primary-700 border border-gray-200 shadow-sm'
+                                ? 'text-gray-400 cursor-not-allowed' 
+                                : 'text-gray-700 hover:bg-gray-200'
                             }`}
                           >
                             Next
-                            <ChevronRight className="w-5 h-5" />
+                            <ChevronRight className="w-4 h-4" />
                           </button>
                         </div>
 
