@@ -121,14 +121,25 @@ export default function UserDashboardView() {
     return stageIcons[stageName] || Package
   }
 
+  // Helper to merge stage master data into order stages
+  const getStagesWithMaster = (orderStages: any[]) => {
+    if (!orderStages || orderStages.length === 0) return [];
+    return orderStages.map((stage: any) => {
+      if (stage.stage_master) return stage;
+      const master = stages.find(sm => sm.id === stage.stage_id);
+      return {
+        ...stage,
+        stage_master: master || undefined
+      };
+    }).sort((a: any, b: any) => (a.stage_master?.stage_order || 0) - (b.stage_master?.stage_order || 0));
+  }
+
   const getCompletedStages = (orderStages: any[]) => {
-    return orderStages?.filter(s => s.status === 'completed').length || 0
+    return getStagesWithMaster(orderStages)?.filter(s => s.status === 'completed').length || 0
   }
 
   const getCurrentStage = (orderStages: any[]) => {
-    const sorted = [...(orderStages || [])].sort((a, b) => 
-      (a.stage_master?.stage_order || 0) - (b.stage_master?.stage_order || 0)
-    )
+    const sorted = getStagesWithMaster(orderStages);
     return sorted.find(s => s.status === 'pending')?.stage_master?.stage_name || 'Completed'
   }
 
@@ -167,176 +178,175 @@ export default function UserDashboardView() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center gap-4">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto flex items-center gap-3 sm:gap-4">
           <Link
             href="/admin"
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </Link>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+            <div className="w-9 h-9 sm:w-12 sm:h-12 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white font-semibold text-sm sm:text-lg flex-shrink-0">
               {user.name?.charAt(0) || 'U'}
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{user.name}'s Dashboard</h1>
-              <p className="text-sm text-gray-500">{user.email}</p>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-base sm:text-xl font-bold text-gray-900 truncate">{user.name}'s Dashboard</h1>
+              <p className="text-xs sm:text-sm text-gray-500 truncate">{user.email}</p>
             </div>
           </div>
-          <span className="ml-auto px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+          <span className="hidden sm:inline px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
             Admin View
           </span>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Package className="w-6 h-6 text-blue-600" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="w-9 h-9 sm:w-12 sm:h-12 bg-blue-100 rounded-lg sm:rounded-xl flex items-center justify-center">
+                <Package className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Total Orders</p>
-                <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
+                <p className="text-[10px] sm:text-sm text-gray-500">Total Orders</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900">{orders.length}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="w-9 h-9 sm:w-12 sm:h-12 bg-green-100 rounded-lg sm:rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-4 h-4 sm:w-6 sm:h-6 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Total Paid</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalSpent)}</p>
+                <p className="text-[10px] sm:text-sm text-gray-500">Total Paid</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900">{formatCurrency(totalSpent)}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-                <Clock className="w-6 h-6 text-orange-600" />
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="w-9 h-9 sm:w-12 sm:h-12 bg-orange-100 rounded-lg sm:rounded-xl flex items-center justify-center">
+                <Clock className="w-4 h-4 sm:w-6 sm:h-6 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Pending Balance</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalPending)}</p>
+                <p className="text-[10px] sm:text-sm text-gray-500">Pending</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900">{formatCurrency(totalPending)}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                <Receipt className="w-6 h-6 text-purple-600" />
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="w-9 h-9 sm:w-12 sm:h-12 bg-purple-100 rounded-lg sm:rounded-xl flex items-center justify-center">
+                <Receipt className="w-4 h-4 sm:w-6 sm:h-6 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Total Expenses</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalExpenses)}</p>
+                <p className="text-[10px] sm:text-sm text-gray-500">Expenses</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900">{formatCurrency(totalExpenses)}</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Orders List */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100">
-                <h2 className="font-semibold text-gray-900">Orders</h2>
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100">
+                <h2 className="font-semibold text-gray-900 text-sm sm:text-base">Orders</h2>
               </div>
               <div className="divide-y divide-gray-100">
                 {orders.length === 0 ? (
-                  <div className="px-6 py-12 text-center text-gray-500">
-                    <Package className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                    <p>No orders for this user</p>
+                  <div className="px-4 sm:px-6 py-8 sm:py-12 text-center text-gray-500">
+                    <Package className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
+                    <p className="text-sm sm:text-base">No orders for this user</p>
                   </div>
                 ) : (
                   orders.map((order: any) => (
                     <div
                       key={order.id}
-                      className={`p-6 cursor-pointer transition-colors ${
+                      className={`p-4 sm:p-6 cursor-pointer transition-colors ${
                         selectedOrder?.id === order.id ? 'bg-slate-50' : 'hover:bg-gray-50'
                       }`}
                       onClick={() => setSelectedOrder(order)}
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex gap-4">
-                          <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center">
-                            <Car className="w-8 h-8 text-gray-400" />
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+                        <div className="flex gap-3 sm:gap-4">
+                          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                            <Car className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
                           </div>
-                          <div>
-                            <h3 className="font-semibold text-gray-900">
+                          <div className="min-w-0">
+                            <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
                               {order.vehicle?.title || 'Vehicle Order'}
                             </h3>
-                            <p className="text-sm text-gray-500">
-                              Order ID: {order.id.substring(0, 8).toUpperCase()}
+                            <p className="text-xs sm:text-sm text-gray-500">
+                              ID: {order.id.substring(0, 8).toUpperCase()}
                             </p>
-                            <div className="flex items-center gap-2 mt-2">
-                              <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                            <div className="flex items-center gap-2 mt-2 flex-wrap">
+                              <span className="px-2 py-0.5 sm:py-1 bg-blue-100 text-blue-700 text-[10px] sm:text-xs font-medium rounded-full">
                                 {getCurrentStage(order.stages)}
                               </span>
-                              <span className="text-xs text-gray-500">
+                              <span className="text-[10px] sm:text-xs text-gray-500">
                                 {getCompletedStages(order.stages)}/{stages.length} stages
                               </span>
                             </div>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-semibold text-gray-900">
+                        <div className="text-left sm:text-right pl-14 sm:pl-0">
+                          <p className="font-semibold text-gray-900 text-sm sm:text-base">
                             {formatCurrency(order.total_price)}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-xs sm:text-sm text-gray-500">
                             {formatDate(order.created_at)}
                           </p>
                         </div>
                       </div>
                     </div>
                   ))
-                )}
+                )}}
               </div>
             </div>
           </div>
 
           {/* Selected Order Details */}
-          <div className="space-y-6">
-            {selectedOrder && (
+          <div className="space-y-4 sm:space-y-6">
+            {selectedOrder ? (
               <>
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                  <h2 className="font-semibold text-gray-900 mb-4">Order Progress</h2>
+                <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                  <h2 className="font-semibold text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">Order Progress</h2>
                   <div className="relative">
-                    <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200" />
-                    <div className="space-y-4">
-                      {selectedOrder.stages
-                        ?.sort((a: any, b: any) => (a.stage_master?.stage_order || 0) - (b.stage_master?.stage_order || 0))
+                    <div className="absolute left-3 sm:left-4 top-0 bottom-0 w-0.5 bg-gray-200" />
+                    <div className="space-y-3 sm:space-y-4">
+                      {getStagesWithMaster(selectedOrder.stages)
                         .slice(0, 5)
                         .map((stage: any) => {
                           const Icon = getStageIcon(stage.stage_master?.stage_name)
                           return (
-                            <div key={stage.id} className="relative flex items-start gap-4 pl-2">
-                              <div className={`relative z-10 w-6 h-6 rounded-full flex items-center justify-center ${
+                            <div key={stage.id} className="relative flex items-start gap-3 sm:gap-4 pl-1 sm:pl-2">
+                              <div className={`relative z-10 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center ${
                                 stage.status === 'completed' 
                                   ? 'bg-green-500 text-white' 
                                   : 'bg-gray-200 text-gray-400'
                               }`}>
                                 {stage.status === 'completed' ? (
-                                  <Check className="w-3 h-3" />
+                                  <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                                 ) : (
-                                  <span className="w-2 h-2 bg-current rounded-full" />
+                                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-current rounded-full" />
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className={`text-sm font-medium ${
+                                <p className={`text-xs sm:text-sm font-medium ${
                                   stage.status === 'completed' ? 'text-gray-900' : 'text-gray-500'
                                 }`}>
-                                  {stage.stage_master?.stage_name}
+                                  {stage.stage_master?.stage_name || 'Unknown Stage'}
                                 </p>
                                 {stage.completed_date && (
-                                  <p className="text-xs text-gray-400">
+                                  <p className="text-[10px] sm:text-xs text-gray-400">
                                     {formatDate(stage.completed_date)}
                                   </p>
                                 )}
@@ -348,18 +358,18 @@ export default function UserDashboardView() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                  <h2 className="font-semibold text-gray-900 mb-4">Payment Summary</h2>
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-sm">
+                <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                  <h2 className="font-semibold text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">Payment Summary</h2>
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="flex justify-between text-xs sm:text-sm">
                       <span className="text-gray-500">Total Amount</span>
                       <span className="font-medium">{formatCurrency(selectedOrder.total_price)}</span>
                     </div>
-                    <div className="flex justify-between text-sm">
+                    <div className="flex justify-between text-xs sm:text-sm">
                       <span className="text-gray-500">Paid Amount</span>
                       <span className="font-medium text-green-600">{formatCurrency(selectedOrder.advance_amount)}</span>
                     </div>
-                    <div className="border-t border-gray-100 pt-3 flex justify-between">
+                    <div className="border-t border-gray-100 pt-2 sm:pt-3 flex justify-between text-xs sm:text-sm">
                       <span className="font-medium text-gray-900">Balance Due</span>
                       <span className="font-bold text-orange-600">{formatCurrency(selectedOrder.balance_amount)}</span>
                     </div>
@@ -368,11 +378,18 @@ export default function UserDashboardView() {
 
                 <Link
                   href={`/admin?order=${selectedOrder.id}`}
-                  className="block w-full py-3 bg-slate-900 text-white text-center rounded-xl hover:bg-slate-800 transition-colors font-medium"
+                  className="block w-full py-2.5 sm:py-3 bg-slate-900 text-white text-center rounded-lg sm:rounded-xl hover:bg-slate-800 transition-colors font-medium text-sm sm:text-base"
                 >
                   Manage This Order
                 </Link>
               </>
+            ) : (
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 text-center">
+                <div className="w-12 h-12 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center">
+                  <Package className="w-6 h-6 text-gray-400" />
+                </div>
+                <p className="text-sm text-gray-500">Select an order to view details</p>
+              </div>
             )}
           </div>
         </div>

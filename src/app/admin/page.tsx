@@ -1,7 +1,9 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
+import { redirect, notFound } from 'next/navigation';
+
+const ADMIN_EMAIL = 'groupvaleron@gmail.com';
 import { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
@@ -32,7 +34,8 @@ import {
   Phone,
   ArrowLeft,
   Check,
-  Circle
+  Circle,
+  Menu
 } from 'lucide-react';
 import { vehicles, reviews } from '@/data/mockData';
 
@@ -110,6 +113,7 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
   const [showAddVehicle, setShowAddVehicle] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // User management state
   const [users, setUsers] = useState<User[]>([]);
@@ -346,6 +350,11 @@ export default function AdminPage() {
     redirect('/api/auth/signin');
   }
 
+  // Only allow admin access
+  if (session.user?.email !== ADMIN_EMAIL) {
+    notFound();
+  }
+
   const tabs = [
     { id: 'dashboard' as AdminTab, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'vehicles' as AdminTab, label: 'Vehicles', icon: Car },
@@ -386,41 +395,78 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Admin Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
-            <p className="text-sm text-gray-500">Manage your vehicle import business</p>
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+            >
+              <Menu className="w-5 h-5 text-gray-600" />
+            </button>
+            <div>
+              <h1 className="text-lg sm:text-xl font-bold text-gray-900">Admin Panel</h1>
+              <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">Manage your vehicle import business</p>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="relative">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <div className="relative hidden sm:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none w-64"
+                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none w-48 lg:w-64"
               />
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <img
                 src={session.user?.image || '/default-avatar.png'}
                 alt="Profile"
-                className="w-10 h-10 rounded-full"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
               />
-              <div>
+              <div className="hidden sm:block">
                 <p className="text-sm font-medium text-gray-900">{session.user?.name}</p>
                 <p className="text-xs text-gray-500">Administrator</p>
               </div>
             </div>
           </div>
         </div>
+        {/* Mobile search bar */}
+        <div className="mt-3 sm:hidden">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none w-full"
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="flex">
+      <div className="flex relative">
+        {/* Mobile Sidebar Overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
-        <div className="w-64 bg-white min-h-[calc(100vh-73px)] border-r border-gray-200 p-4">
+        <div className={`${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 lg:z-0 w-64 bg-white min-h-[calc(100vh-73px)] border-r border-gray-200 p-4 transition-transform duration-300 ease-in-out`}>
+          <div className="flex items-center justify-between lg:hidden mb-4">
+            <span className="font-semibold text-gray-900">Menu</span>
+            <button onClick={() => setSidebarOpen(false)} className="p-2 hover:bg-gray-100 rounded-lg">
+              <X className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
           <nav className="space-y-1">
             {tabs.map((tab) => (
               <button
@@ -429,6 +475,7 @@ export default function AdminPage() {
                   setActiveTab(tab.id);
                   setSelectedUser(null);
                   setSelectedOrder(null);
+                  setSidebarOpen(false);
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   activeTab === tab.id
@@ -444,44 +491,44 @@ export default function AdminPage() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-3 sm:p-4 lg:p-6 w-full min-w-0">
           {/* Dashboard Tab */}
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
               {/* Stats Grid */}
-              <div className="grid grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                 {stats.map((stat, idx) => (
-                  <div key={idx} className="bg-white rounded-xl shadow-soft p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className={`p-3 rounded-lg ${stat.color}`}>
-                        <stat.icon className="w-6 h-6 text-white" />
+                  <div key={idx} className="bg-white rounded-xl shadow-soft p-4 sm:p-6">
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <div className={`p-2 sm:p-3 rounded-lg ${stat.color}`}>
+                        <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                       </div>
-                      <span className="text-sm font-medium text-green-600">{stat.change}</span>
+                      <span className="text-xs sm:text-sm font-medium text-green-600">{stat.change}</span>
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
-                    <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900">{stat.value}</h3>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-1">{stat.label}</p>
                   </div>
                 ))}
               </div>
 
               {/* Recent Activity */}
-              <div className="bg-white rounded-xl shadow-soft p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
+              <div className="bg-white rounded-xl shadow-soft p-4 sm:p-6">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
                 <div className="space-y-4">
                   {users.slice(0, 5).flatMap(user => 
                     user.orders?.slice(0, 2).map(order => (
-                      <div key={order.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                      <div key={order.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center shrink-0">
                             <Package className="w-5 h-5 text-gray-500" />
                           </div>
-                          <div>
-                            <p className="font-medium text-gray-900">{user.name}</p>
-                            <p className="text-sm text-gray-500">{order.vehicle_name || 'Vehicle Order'}</p>
+                          <div className="min-w-0">
+                            <p className="font-medium text-gray-900 truncate">{user.name}</p>
+                            <p className="text-sm text-gray-500 truncate">{order.vehicle_name || 'Vehicle Order'}</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-medium text-gray-900">{formatCurrency(order.total_price)}</p>
+                        <div className="text-right shrink-0">
+                          <p className="font-medium text-gray-900 text-sm sm:text-base">{formatCurrency(order.total_price)}</p>
                           <p className="text-xs text-gray-500">{formatDate(order.created_at)}</p>
                         </div>
                       </div>
@@ -507,58 +554,92 @@ export default function AdminPage() {
                   <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
                 </div>
               ) : (
-                <div className="bg-white rounded-xl shadow-soft overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Orders</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {filteredUsers.map((user) => (
-                        <tr key={user.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedUser(user)}>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                                <span className="text-primary-600 font-medium">
-                                  {user.name?.charAt(0) || user.email?.charAt(0)}
+                <>
+                  {/* Desktop Table */}
+                  <div className="bg-white rounded-xl shadow-soft overflow-hidden hidden md:block">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Orders</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                          {filteredUsers.map((user) => (
+                            <tr key={user.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedUser(user)}>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                                    <span className="text-primary-600 font-medium">
+                                      {user.name?.charAt(0) || user.email?.charAt(0)}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-gray-900">{user.name || 'No Name'}</p>
+                                    <p className="text-sm text-gray-500">{user.role}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600">{user.email}</td>
+                              <td className="px-6 py-4">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                  {user.orders?.length || 0} orders
                                 </span>
-                              </div>
-                              <div>
-                                <p className="font-medium text-gray-900">{user.name || 'No Name'}</p>
-                                <p className="text-sm text-gray-500">{user.role}</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-600">{user.email}</td>
-                          <td className="px-6 py-4">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              {user.orders?.length || 0} orders
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600">{formatDate(user.created_at)}</td>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center justify-end gap-2">
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); setSelectedUser(user); }}
+                                    className="p-2 hover:bg-gray-100 rounded-lg"
+                                  >
+                                    <Eye className="w-4 h-4 text-gray-500" />
+                                  </button>
+                                  <button className="p-2 hover:bg-gray-100 rounded-lg">
+                                    <Edit className="w-4 h-4 text-gray-500" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Mobile Card List */}
+                  <div className="space-y-3 md:hidden">
+                    {filteredUsers.map((user) => (
+                      <div
+                        key={user.id}
+                        onClick={() => setSelectedUser(user)}
+                        className="bg-white rounded-xl shadow-soft p-4 cursor-pointer active:bg-gray-50"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center shrink-0">
+                            <span className="text-primary-600 font-medium">
+                              {user.name?.charAt(0) || user.email?.charAt(0)}
                             </span>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-600">{formatDate(user.created_at)}</td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center justify-end gap-2">
-                              <button 
-                                onClick={(e) => { e.stopPropagation(); setSelectedUser(user); }}
-                                className="p-2 hover:bg-gray-100 rounded-lg"
-                              >
-                                <Eye className="w-4 h-4 text-gray-500" />
-                              </button>
-                              <button className="p-2 hover:bg-gray-100 rounded-lg">
-                                <Edit className="w-4 h-4 text-gray-500" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium text-gray-900 truncate">{user.name || 'No Name'}</p>
+                            <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              {user.orders?.length || 0}
+                            </span>
+                            <ChevronRight className="w-4 h-4 text-gray-400" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           )}
@@ -575,24 +656,24 @@ export default function AdminPage() {
               </button>
 
               {/* User Info Card */}
-              <div className="bg-white rounded-xl shadow-soft p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center">
-                      <span className="text-2xl text-primary-600 font-bold">
+              <div className="bg-white rounded-xl shadow-soft p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary-100 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-xl sm:text-2xl text-primary-600 font-bold">
                         {selectedUser.name?.charAt(0) || selectedUser.email?.charAt(0)}
                       </span>
                     </div>
-                    <div>
-                      <h2 className="text-xl font-bold text-gray-900">{selectedUser.name || 'No Name'}</h2>
-                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                        <span className="flex items-center gap-1">
-                          <Mail className="w-4 h-4" />
-                          {selectedUser.email}
+                    <div className="min-w-0">
+                      <h2 className="text-lg sm:text-xl font-bold text-gray-900 truncate">{selectedUser.name || 'No Name'}</h2>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-1 sm:mt-2 text-sm text-gray-500">
+                        <span className="flex items-center gap-1 truncate">
+                          <Mail className="w-4 h-4 shrink-0" />
+                          <span className="truncate">{selectedUser.email}</span>
                         </span>
                         {selectedUser.phone && (
                           <span className="flex items-center gap-1">
-                            <Phone className="w-4 h-4" />
+                            <Phone className="w-4 h-4 shrink-0" />
                             {selectedUser.phone}
                           </span>
                         )}
@@ -601,7 +682,7 @@ export default function AdminPage() {
                   </div>
                   <button
                     onClick={() => setShowCreateOrder(true)}
-                    className="btn-primary flex items-center gap-2"
+                    className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
                   >
                     <Plus className="w-5 h-5" />
                     Create Order
@@ -626,19 +707,19 @@ export default function AdminPage() {
                           onClick={() => setSelectedOrder(order)}
                           className="px-6 py-4 hover:bg-gray-50 cursor-pointer"
                         >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-medium text-gray-900">{order.vehicle_name || 'Vehicle Order'}</p>
-                              <p className="text-sm text-gray-500">Ref: {order.referral_code}</p>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="min-w-0">
+                              <p className="font-medium text-gray-900 truncate">{order.vehicle_name || 'Vehicle Order'}</p>
+                              <p className="text-sm text-gray-500 truncate">Ref: {order.referral_code}</p>
                             </div>
-                            <div className="text-right">
-                              <p className="font-bold text-gray-900">{formatCurrency(order.total_price)}</p>
-                              <div className="flex items-center gap-2 mt-1">
+                            <div className="text-right shrink-0">
+                              <p className="font-bold text-gray-900 text-sm sm:text-base">{formatCurrency(order.total_price)}</p>
+                              <div className="flex items-center gap-1 sm:gap-2 mt-1">
                                 <span className="text-xs text-green-600">Paid: {formatCurrency(totalPaid)}</span>
                                 <span className="text-xs text-orange-600">Due: {formatCurrency(balanceDue)}</span>
                               </div>
                             </div>
-                            <ChevronRight className="w-5 h-5 text-gray-400" />
+                            <ChevronRight className="w-5 h-5 text-gray-400 shrink-0 hidden sm:block" />
                           </div>
                         
                         {/* Stage Progress Bar */}
@@ -692,15 +773,15 @@ export default function AdminPage() {
               </button>
 
               {/* Order Overview */}
-              <div className="bg-white rounded-xl shadow-soft p-6">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900">{selectedOrder.vehicle_name || 'Vehicle Order'}</h2>
-                    <p className="text-sm text-gray-500">Reference: {selectedOrder.referral_code}</p>
+              <div className="bg-white rounded-xl shadow-soft p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4 sm:mb-6">
+                  <div className="min-w-0">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 truncate">{selectedOrder.vehicle_name || 'Vehicle Order'}</h2>
+                    <p className="text-sm text-gray-500 truncate">Reference: {selectedOrder.referral_code}</p>
                   </div>
                   <button
                     onClick={() => setShowAddExpense(true)}
-                    className="btn-primary flex items-center gap-2"
+                    className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
                   >
                     <Plus className="w-5 h-5" />
                     Add Expense
@@ -712,18 +793,18 @@ export default function AdminPage() {
                   const balanceDue = selectedOrder.total_price - totalPaid;
                   
                   return (
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <p className="text-sm text-gray-500">Total Price</p>
-                        <p className="text-2xl font-bold text-gray-900">{formatCurrency(selectedOrder.total_price)}</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                      <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                        <p className="text-xs sm:text-sm text-gray-500">Total Price</p>
+                        <p className="text-lg sm:text-2xl font-bold text-gray-900">{formatCurrency(selectedOrder.total_price)}</p>
                       </div>
-                      <div className="bg-green-50 rounded-lg p-4">
-                        <p className="text-sm text-green-600">Total Paid</p>
-                        <p className="text-2xl font-bold text-green-700">{formatCurrency(totalPaid)}</p>
+                      <div className="bg-green-50 rounded-lg p-3 sm:p-4">
+                        <p className="text-xs sm:text-sm text-green-600">Total Paid</p>
+                        <p className="text-lg sm:text-2xl font-bold text-green-700">{formatCurrency(totalPaid)}</p>
                       </div>
-                      <div className="bg-orange-50 rounded-lg p-4">
-                        <p className="text-sm text-orange-600">Balance Due</p>
-                        <p className="text-2xl font-bold text-orange-700">{formatCurrency(balanceDue)}</p>
+                      <div className="bg-orange-50 rounded-lg p-3 sm:p-4">
+                        <p className="text-xs sm:text-sm text-orange-600">Balance Due</p>
+                        <p className="text-lg sm:text-2xl font-bold text-orange-700">{formatCurrency(balanceDue)}</p>
                       </div>
                     </div>
                   );
@@ -738,27 +819,27 @@ export default function AdminPage() {
                 
                 <div className="divide-y divide-gray-100">
                   {selectedOrder.stages?.sort((a, b) => a.stage_master.stage_order - b.stage_master.stage_order).map((stage) => (
-                    <div key={stage.id} className="px-6 py-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                    <div key={stage.id} className="px-4 sm:px-6 py-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div className="flex items-start sm:items-center gap-3 sm:gap-4">
+                          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 ${
                             stage.status === 'completed' ? 'bg-green-100' :
                             stage.status === 'in_progress' ? 'bg-blue-100' :
                             'bg-gray-100'
                           }`}>
                             {stage.status === 'completed' ? (
-                              <Check className="w-5 h-5 text-green-600" />
+                              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                             ) : stage.status === 'in_progress' ? (
-                              <Clock className="w-5 h-5 text-blue-600" />
+                              <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                             ) : (
-                              <Circle className="w-5 h-5 text-gray-400" />
+                              <Circle className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                             )}
                           </div>
-                          <div>
-                            <p className="font-medium text-gray-900">
+                          <div className="min-w-0">
+                            <p className="font-medium text-gray-900 text-sm sm:text-base">
                               {stage.stage_master.stage_order}. {stage.stage_master.name}
                             </p>
-                            <p className="text-sm text-gray-500">{stage.stage_master.description}</p>
+                            <p className="text-xs sm:text-sm text-gray-500">{stage.stage_master.description}</p>
                             {stage.estimated_date && (
                               <p className="text-xs text-blue-600 mt-1">
                                 Est: {formatDate(stage.estimated_date)}
@@ -772,7 +853,7 @@ export default function AdminPage() {
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 ml-11 sm:ml-0 shrink-0">
                           <button
                             onClick={() => {
                               setShowStageEdit(stage);
@@ -789,14 +870,14 @@ export default function AdminPage() {
                           {stage.status !== 'completed' ? (
                             <button
                               onClick={() => handleStageUpdate(stage.stage_id, 'completed')}
-                              className="px-3 py-1.5 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200"
+                              className="px-3 py-1.5 text-xs sm:text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200"
                             >
                               Complete
                             </button>
                           ) : (
                             <button
                               onClick={() => handleStageUpdate(stage.stage_id, 'pending')}
-                              className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                              className="px-3 py-1.5 text-xs sm:text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
                             >
                               Uncomplete
                             </button>
@@ -817,13 +898,13 @@ export default function AdminPage() {
                 {selectedOrder.expenses && selectedOrder.expenses.length > 0 ? (
                   <div className="divide-y divide-gray-100">
                     {selectedOrder.expenses.map((expense) => (
-                      <div key={expense.id} className="px-6 py-4 flex items-center justify-between">
-                        <div>
-                          <p className="font-medium text-gray-900">{expense.category}</p>
-                          <p className="text-sm text-gray-500">{expense.description}</p>
+                      <div key={expense.id} className="px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="font-medium text-gray-900 text-sm sm:text-base">{expense.category}</p>
+                          <p className="text-xs sm:text-sm text-gray-500 truncate">{expense.description}</p>
                           <p className="text-xs text-gray-400">{formatDate(expense.created_at)}</p>
                         </div>
-                        <p className="font-bold text-green-600">+ {formatCurrency(expense.amount)}</p>
+                        <p className="font-bold text-green-600 shrink-0 text-sm sm:text-base">+ {formatCurrency(expense.amount)}</p>
                       </div>
                     ))}
                   </div>
@@ -840,47 +921,94 @@ export default function AdminPage() {
           {activeTab === 'vehicles' && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">Vehicle Inventory</h2>
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Vehicle Inventory</h2>
                 <button
                   onClick={() => setShowAddVehicle(true)}
-                  className="btn-primary flex items-center gap-2"
+                  className="btn-primary flex items-center gap-2 text-sm sm:text-base"
                 >
                   <Plus className="w-5 h-5" />
                   Add Vehicle
                 </button>
               </div>
 
-              <div className="bg-white rounded-xl shadow-soft overflow-hidden">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Year</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {vehicles.map((vehicle) => (
-                      <tr key={vehicle.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={vehicle.images[0]}
-                              alt={`${vehicle.brand} ${vehicle.model}`}
-                              className="w-12 h-12 rounded-lg object-cover"
-                            />
-                            <div>
-                              <p className="font-medium text-gray-900">{vehicle.brand} {vehicle.model}</p>
-                              <p className="text-sm text-gray-500">{vehicle.color}</p>
+              {/* Desktop Vehicle Table */}
+              <div className="bg-white rounded-xl shadow-soft overflow-hidden hidden md:block">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Year</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {vehicles.map((vehicle) => (
+                        <tr key={vehicle.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={vehicle.images[0]}
+                                alt={`${vehicle.brand} ${vehicle.model}`}
+                                className="w-12 h-12 rounded-lg object-cover"
+                              />
+                              <div>
+                                <p className="font-medium text-gray-900">{vehicle.brand} {vehicle.model}</p>
+                                <p className="text-sm text-gray-500">{vehicle.color}</p>
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{vehicle.year}</td>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{formatCurrency(vehicle.price)}</td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-600">{vehicle.year}</td>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-900">{formatCurrency(vehicle.price)}</td>
+                          <td className="px-6 py-4">
+                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                              vehicle.importStatus === 'available'
+                                ? 'bg-green-100 text-green-700'
+                                : vehicle.importStatus === 'reserved'
+                                ? 'bg-yellow-100 text-yellow-700'
+                                : 'bg-red-100 text-red-700'
+                            }`}>
+                              {vehicle.importStatus}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center justify-end gap-2">
+                              <button className="p-2 hover:bg-gray-100 rounded-lg">
+                                <Eye className="w-4 h-4 text-gray-500" />
+                              </button>
+                              <button className="p-2 hover:bg-gray-100 rounded-lg">
+                                <Edit className="w-4 h-4 text-gray-500" />
+                              </button>
+                              <button className="p-2 hover:bg-red-50 rounded-lg">
+                                <Trash2 className="w-4 h-4 text-red-500" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Mobile Vehicle Cards */}
+              <div className="space-y-3 md:hidden">
+                {vehicles.map((vehicle) => (
+                  <div key={vehicle.id} className="bg-white rounded-xl shadow-soft p-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={vehicle.images[0]}
+                        alt={`${vehicle.brand} ${vehicle.model}`}
+                        className="w-16 h-16 rounded-lg object-cover shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-gray-900 truncate">{vehicle.brand} {vehicle.model}</p>
+                        <p className="text-sm text-gray-500">{vehicle.year} &middot; {vehicle.color}</p>
+                        <div className="flex items-center justify-between mt-2">
+                          <p className="text-sm font-medium text-gray-900">{formatCurrency(vehicle.price)}</p>
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                             vehicle.importStatus === 'available'
                               ? 'bg-green-100 text-green-700'
                               : vehicle.importStatus === 'reserved'
@@ -889,24 +1017,22 @@ export default function AdminPage() {
                           }`}>
                             {vehicle.importStatus}
                           </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center justify-end gap-2">
-                            <button className="p-2 hover:bg-gray-100 rounded-lg">
-                              <Eye className="w-4 h-4 text-gray-500" />
-                            </button>
-                            <button className="p-2 hover:bg-gray-100 rounded-lg">
-                              <Edit className="w-4 h-4 text-gray-500" />
-                            </button>
-                            <button className="p-2 hover:bg-red-50 rounded-lg">
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-gray-100">
+                      <button className="p-2 hover:bg-gray-100 rounded-lg">
+                        <Eye className="w-4 h-4 text-gray-500" />
+                      </button>
+                      <button className="p-2 hover:bg-gray-100 rounded-lg">
+                        <Edit className="w-4 h-4 text-gray-500" />
+                      </button>
+                      <button className="p-2 hover:bg-red-50 rounded-lg">
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -927,14 +1053,14 @@ export default function AdminPage() {
               <h2 className="text-xl font-semibold text-gray-900">Review Management</h2>
               <div className="bg-white rounded-xl shadow-soft divide-y divide-gray-100">
                 {reviews.map((review) => (
-                  <div key={review.id} className="p-6 flex items-start justify-between">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Users className="w-5 h-5 text-gray-500" />
+                  <div key={review.id} className="p-4 sm:p-6 flex items-start justify-between">
+                    <div className="flex items-start gap-3 sm:gap-4">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-full flex items-center justify-center shrink-0">
+                        <Users className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-medium text-gray-900">{review.customerName}</h4>
+                      <div className="min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base">{review.customerName}</h4>
                           <div className="flex items-center gap-1">
                             {[...Array(5)].map((_, i) => (
                               <Star
@@ -979,10 +1105,10 @@ export default function AdminPage() {
 
       {/* Create Order Modal */}
       {showCreateOrder && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Create Order for {selectedUser?.name}</h2>
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Create Order for {selectedUser?.name}</h2>
               <button onClick={() => setShowCreateOrder(false)} className="text-gray-400 hover:text-gray-600">
                 <X className="w-6 h-6" />
               </button>
@@ -1035,10 +1161,10 @@ export default function AdminPage() {
 
       {/* Add Payment Modal */}
       {showAddPayment && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Add Payment</h2>
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Add Payment</h2>
               <button onClick={() => setShowAddPayment(false)} className="text-gray-400 hover:text-gray-600">
                 <X className="w-6 h-6" />
               </button>
@@ -1094,10 +1220,10 @@ export default function AdminPage() {
 
       {/* Add Expense Modal */}
       {showAddExpense && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Add Expense</h2>
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Add Expense</h2>
               <button onClick={() => setShowAddExpense(false)} className="text-gray-400 hover:text-gray-600">
                 <X className="w-6 h-6" />
               </button>
@@ -1156,10 +1282,10 @@ export default function AdminPage() {
 
       {/* Edit Stage Modal */}
       {showStageEdit && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Edit Stage</h2>
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Edit Stage</h2>
               <button onClick={() => setShowStageEdit(null)} className="text-gray-400 hover:text-gray-600">
                 <X className="w-6 h-6" />
               </button>
