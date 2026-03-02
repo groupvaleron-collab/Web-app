@@ -18,14 +18,9 @@ export default withAuth(
     const userEmail = token.email as string
     const isAdmin = userEmail === ADMIN_EMAIL || (token.role as string) === 'admin'
 
-    // Admin trying to access admin page - allow
-    if (isAdminPath && isAdmin) {
+    // Admin trying to access admin page - allow (page will handle final check)
+    if (isAdminPath) {
       return NextResponse.next()
-    }
-
-    // Non-admin trying to access admin page - redirect to dashboard
-    if (isAdminPath && !isAdmin) {
-      return NextResponse.redirect(new URL('/dashboard', req.url))
     }
 
     // Admin accessing dashboard - redirect to admin

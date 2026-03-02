@@ -91,55 +91,53 @@ export default function StocksPage() {
   const activeFiltersCount = Object.values(filters).filter(v => v !== '').length
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-24">
+    <div className="min-h-screen bg-slate-50 pt-0 sm:pt-4">
+      
       {/* Background effects */}
       <div className="fixed inset-0 grid-bg opacity-20 pointer-events-none" />
-      <div className="fixed top-1/4 left-0 w-[600px] h-[600px] bg-slate-900/5 rounded-full blur-[150px] pointer-events-none" />
-      <div className="fixed bottom-1/4 right-0 w-[600px] h-[600px] bg-slate-900/5 rounded-full blur-[150px] pointer-events-none" />
+      <div className="fixed top-1/4 left-0 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-slate-900/5 rounded-full blur-[100px] sm:blur-[150px] pointer-events-none" />
+      <div className="fixed bottom-1/4 right-0 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-slate-900/5 rounded-full blur-[100px] sm:blur-[150px] pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Page Header */}
-        <div className="mb-10">
-          <div className="flex items-center gap-2 text-slate-800 font-medium text-sm uppercase tracking-wider mb-3">
-            <Sparkles className="w-4 h-4" />
-            Premium Collection
+        
+        <div className="mb-4 sm:mb-6">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-800">
+              Vehicle <span className="text-gradient">Stock</span>
+            </h1>
+            <Sparkles className="w-4 h-4 text-slate-400" />
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-slate-800 mb-3">
-            Vehicle <span className="text-gradient">Stock</span>
-          </h1>
-          <p className="text-slate-500 text-lg">
-            Browse our collection of premium imported vehicles from Japan
-          </p>
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="rounded-2xl bg-white backdrop-blur-xl border border-slate-200 p-5 mb-8 shadow-sm">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="rounded-xl bg-white/80 backdrop-blur-xl border border-slate-200 p-3 sm:p-4 mb-4 sm:mb-6 shadow-sm">
+          <div className="grid grid-cols-2 md:flex md:flex-row gap-2 sm:gap-3">
             {/* Search Input */}
-            <div className="flex-grow relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <div className="flex-grow relative col-span-2">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search by brand, model, or color..."
+                placeholder="Search vehicles..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all"
+                className="w-full pl-9 sm:pl-11 pr-3 py-2.5 sm:py-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all text-sm"
               />
             </div>
 
             {/* Filter Toggle */}
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className={`flex items-center gap-2 px-5 py-3.5 rounded-xl border transition-all ${
+              className={`flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border transition-all ${
                 isFilterOpen || activeFiltersCount > 0
                   ? 'bg-slate-100 border-slate-900 text-slate-800'
                   : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
-              <SlidersHorizontal className="w-5 h-5" />
-              <span className="font-medium">Filters</span>
+              <SlidersHorizontal className="w-4 h-4" />
+              <span className="font-medium text-sm">Filters</span>
               {activeFiltersCount > 0 && (
-                <span className="w-6 h-6 bg-slate-900 text-white text-xs rounded-full flex items-center justify-center">
+                <span className="w-5 h-5 bg-slate-900 text-white text-[10px] rounded-full flex items-center justify-center">
                   {activeFiltersCount}
                 </span>
               )}
@@ -150,29 +148,29 @@ export default function StocksPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none w-full md:w-48 px-4 py-3.5 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all font-medium"
+                className="appearance-none w-full h-full md:w-44 px-3 py-2.5 sm:py-3 pr-8 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all font-medium text-sm"
               >
-                <option value="newest">Newest First</option>
+                <option value="newest">Sort By</option>
                 <option value="year-new">Year: Newest</option>
                 <option value="year-old">Year: Oldest</option>
                 <option value="mileage-low">Mileage: Lowest</option>
               </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
             </div>
 
             {/* View Toggle */}
-            <div className="hidden md:flex items-center gap-1 p-1 bg-slate-100 border border-slate-200 rounded-xl">
+            <div className="hidden md:flex items-center gap-1 p-1 bg-slate-100 border border-slate-200 rounded-lg">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2.5 rounded-lg transition-all ${
+                className={`p-2 rounded-md transition-all ${
                   viewMode === 'grid' ? 'bg-slate-900 text-white' : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
-                <Grid className="w-5 h-5" />
+                <Grid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2.5 rounded-lg transition-all ${
+                className={`p-2 rounded-md transition-all ${
                   viewMode === 'list' ? 'bg-slate-900 text-white' : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
@@ -183,15 +181,15 @@ export default function StocksPage() {
 
           {/* Filter Panel */}
           {isFilterOpen && (
-            <div className="mt-5 pt-5 border-t border-slate-200 animate-slide-down">
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="mt-3 pt-3 border-t border-slate-200 animate-slide-down">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
                 {/* Brand */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-600 mb-2">Brand</label>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Brand</label>
                   <select
                     value={filters.brand}
                     onChange={(e) => handleFilterChange('brand', e.target.value)}
-                    className="input-field py-2.5 text-sm"
+                    className="input-field py-1.5 text-xs sm:py-2 sm:text-sm"
                   >
                     <option value="">All Brands</option>
                     {filterOptions.brands.map(brand => (
@@ -202,11 +200,11 @@ export default function StocksPage() {
 
                 {/* Year Range */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-600 mb-2">Year From</label>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Year From</label>
                   <select
                     value={filters.yearMin}
                     onChange={(e) => handleFilterChange('yearMin', e.target.value)}
-                    className="input-field py-2.5 text-sm"
+                    className="input-field py-1.5 text-xs sm:py-2 sm:text-sm"
                   >
                     <option value="">Any</option>
                     {filterOptions.years.map(year => (
@@ -216,11 +214,11 @@ export default function StocksPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-600 mb-2">Year To</label>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Year To</label>
                   <select
                     value={filters.yearMax}
                     onChange={(e) => handleFilterChange('yearMax', e.target.value)}
-                    className="input-field py-2.5 text-sm"
+                    className="input-field py-1.5 text-xs sm:py-2 sm:text-sm"
                   >
                     <option value="">Any</option>
                     {filterOptions.years.map(year => (
@@ -231,11 +229,11 @@ export default function StocksPage() {
 
                 {/* Transmission */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-600 mb-2">Transmission</label>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Transmission</label>
                   <select
                     value={filters.transmission}
                     onChange={(e) => handleFilterChange('transmission', e.target.value)}
-                    className="input-field py-2.5 text-sm"
+                    className="input-field py-1.5 text-xs sm:py-2 sm:text-sm"
                   >
                     <option value="">Any</option>
                     {filterOptions.transmissions.map(trans => (
@@ -246,11 +244,11 @@ export default function StocksPage() {
 
                 {/* Fuel Type */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-600 mb-2">Fuel Type</label>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Fuel</label>
                   <select
                     value={filters.fuelType}
                     onChange={(e) => handleFilterChange('fuelType', e.target.value)}
-                    className="input-field py-2.5 text-sm"
+                    className="input-field py-1.5 text-xs sm:py-2 sm:text-sm"
                   >
                     <option value="">Any</option>
                     {filterOptions.fuelTypes.map(fuel => (
@@ -261,11 +259,11 @@ export default function StocksPage() {
 
                 {/* Status */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-600 mb-2">Status</label>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
                   <select
                     value={filters.importStatus}
                     onChange={(e) => handleFilterChange('importStatus', e.target.value)}
-                    className="input-field py-2.5 text-sm"
+                    className="input-field py-1.5 text-xs sm:py-2 sm:text-sm"
                   >
                     <option value="">Any</option>
                     <option value="available">Available</option>
@@ -277,7 +275,7 @@ export default function StocksPage() {
 
               {/* Clear Filters */}
               {activeFiltersCount > 0 && (
-                <div className="mt-5 flex justify-end">
+                <div className="mt-3 flex justify-end">
                   <button
                     onClick={clearFilters}
                     className="flex items-center gap-2 text-sm text-red-500 hover:text-red-600 font-medium transition-colors"
@@ -291,31 +289,49 @@ export default function StocksPage() {
           )}
         </div>
 
-        {/* Results Count */}
-        <div className="mb-6 flex items-center justify-between">
-          <p className="text-slate-500">
-            Showing <span className="font-semibold text-slate-800">{filteredVehicles.length}</span> vehicles
+        {/* Results Count & View Toggle (Mobile) */}
+        <div className="mb-3 sm:mb-4 flex items-center justify-between">
+          <p className="text-xs sm:text-sm text-slate-500">
+            <span className="font-semibold text-slate-800">{filteredVehicles.length}</span> vehicles
           </p>
+          <div className="flex md:hidden items-center gap-1 p-0.5 bg-white border border-slate-200 rounded-lg">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 rounded-md transition-all ${
+                viewMode === 'grid' ? 'bg-slate-900 text-white' : 'text-slate-400'
+              }`}
+            >
+              <Grid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 rounded-md transition-all ${
+                viewMode === 'list' ? 'bg-slate-900 text-white' : 'text-slate-400'
+              }`}
+            >
+              <List className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Vehicle Grid */}
         {filteredVehicles.length > 0 ? (
           <div className={
             viewMode === 'grid'
-              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-              : 'space-y-4'
+              ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5'
+              : 'space-y-3'
           }>
             {filteredVehicles.map((vehicle) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} />
+              <VehicleCard key={vehicle.id} vehicle={vehicle} viewMode={viewMode} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-20">
-            <div className="w-24 h-24 bg-slate-100 rounded-2xl border border-slate-200 flex items-center justify-center mx-auto mb-6">
-              <Search className="w-12 h-12 text-slate-400" />
+          <div className="text-center py-8 sm:py-16">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-center mx-auto mb-4">
+              <Search className="w-8 h-8 sm:w-10 sm:h-10 text-slate-400" />
             </div>
-            <h3 className="text-2xl font-semibold text-slate-800 mb-3">No vehicles found</h3>
-            <p className="text-slate-500 mb-6">Try adjusting your filters or search query</p>
+            <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-2">No vehicles found</h3>
+            <p className="text-sm text-slate-500 mb-4 max-w-xs mx-auto">Try adjusting your filters or search query</p>
             <button
               onClick={clearFilters}
               className="btn-outline"

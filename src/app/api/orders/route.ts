@@ -24,7 +24,7 @@ export async function GET(request: Request) {
         *,
         user:users(*),
         vehicle:vehicles(*),
-        stages:order_stages(*, stage_master:stages_master!stage_id(*)),
+        stages:order_stages(*, stage_master:stages_master(*)),
         expenses(*),
         payments(*)
       `)
