@@ -699,6 +699,7 @@ export default function DashboardPage() {
                                         <p className="text-amber-800 font-medium text-lg">{stage?.customerAction}</p>
                                       </div>
                                     </div>
+                                    
                                   </div>
                                 )}
 
