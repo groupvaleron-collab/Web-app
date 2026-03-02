@@ -308,7 +308,7 @@ export default function UserDashboardView() {
                       </div>
                     </div>
                   ))
-                )}}
+                )}
               </div>
             </div>
           </div>
