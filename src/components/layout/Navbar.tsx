@@ -1,15 +1,30 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { useSession, signIn, signOut } from 'next-auth/react'
-import { Menu, X, Car, User, LogOut, LayoutDashboard, ChevronDown } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
+import { useSession, signOut } from 'next-auth/react'
+import { Menu, X, Car, User, LogOut, Gavel, ChevronDown } from 'lucide-react'
 
 export default function Navbar() {
   const { data: session, status } = useSession()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const userMenu = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
+
+  // The account menu closes on a click or tap anywhere outside it, on Escape,
+  // and when the page changes.
+  useEffect(() => {
+    if (!isUserMenuOpen) return
+    const away = (e: PointerEvent) => { if (!userMenu.current?.contains(e.target as Node)) setIsUserMenuOpen(false) }
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsUserMenuOpen(false) }
+    document.addEventListener('pointerdown', away)
+    document.addEventListener('keydown', esc)
+    return () => { document.removeEventListener('pointerdown', away); document.removeEventListener('keydown', esc) }
+  }, [isUserMenuOpen])
+  useEffect(() => { setIsUserMenuOpen(false); setIsMenuOpen(false) }, [pathname])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,13 +34,15 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Reviews is hidden while that page is being finished. Auction only means
+  // something with a sign-in link, so it appears only once signed in.
   const navigation = [
     { name: 'Home', href: '/' },
+    ...(session ? [{ name: 'Auction', href: '/auctions' }] : []),
     { name: 'Stock', href: '/stocks' },
-    { name: 'Calculator', href: '/calculator' },
-    { name: 'Reviews', href: '/reviews' },
     { name: 'Contact', href: '/#contact' },
   ]
+  const displayName = session?.user?.name?.trim() || ''
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200 shadow-lg shadow-slate-200/50">
@@ -76,9 +93,10 @@ export default function Navbar() {
             {status === 'loading' ? (
               <div className="w-10 h-10 rounded-xl bg-slate-100 animate-pulse" />
             ) : session ? (
-              <div className="relative">
+              <div className="relative" ref={userMenu}>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  aria-expanded={isUserMenuOpen} aria-haspopup="menu"
                   className="flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-900/50 transition-all duration-300"
                 >
                   {session.user?.image ? (
@@ -93,49 +111,46 @@ export default function Navbar() {
                     </div>
                   )}
                   <span className="font-medium text-slate-700 max-w-[100px] truncate text-sm">
-                    {session.user?.name?.split(' ')[0]}
+                    {displayName.split(' ')[0] || 'Account'}
                   </span>
                   <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-300 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* User Dropdown */}
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white backdrop-blur-xl rounded-2xl border border-slate-200 py-2 animate-scale-in shadow-xl shadow-slate-200/50">
-                    <div className="px-4 py-3 border-b border-slate-100">
-                      <p className="font-semibold text-slate-800">{session.user?.name}</p>
-                      <p className="text-sm text-slate-500 truncate">{session.user?.email}</p>
+                  <div role="menu" className="absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-xl border border-slate-200 p-1.5 animate-scale-in shadow-xl shadow-slate-900/10">
+                    <div className="px-3 py-2.5 mb-1 border-b border-slate-100">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Signed in as</p>
+                      <p className="font-semibold text-slate-900 truncate">{displayName || 'Your account'}</p>
                     </div>
-                    <div className="py-2">
+                    <div>
                       <Link
-                        href="/dashboard"
-                        className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-slate-800 hover:bg-slate-50 transition-all"
+                        href="/auctions"
+                        role="menuitem" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
-                        <LayoutDashboard className="w-5 h-5" />
-                        <span>Dashboard</span>
+                        <Gavel className="w-4 h-4 text-slate-400" />
+                        <span>Auctions</span>
                       </Link>
                       <button
                         onClick={() => {
                           setIsUserMenuOpen(false)
-                          signOut()
+                          signOut({ callbackUrl: '/' })
                         }}
-                        className="flex items-center gap-3 w-full px-4 py-3 text-slate-600 hover:text-red-600 hover:bg-slate-50 transition-all"
+                        role="menuitem" className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:text-red-600 hover:bg-red-50 transition-colors"
                       >
-                        <LogOut className="w-5 h-5" />
-                        <span>Sign Out</span>
+                        <LogOut className="w-4 h-4 text-slate-400" />
+                        <span>Sign out</span>
                       </button>
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              <button
-                onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
-                className="btn-primary flex items-center gap-2 text-sm"
-              >
+              <Link href="/auth/signin" className="btn-primary flex items-center gap-2 text-sm">
                 <User className="w-4 h-4" />
                 Login
-              </button>
+              </Link>
             )}
           </div>
 
@@ -187,22 +202,21 @@ export default function Navbar() {
                       </div>
                     )}
                     <div>
-                      <p className="font-semibold text-slate-800">{session.user?.name}</p>
-                      <p className="text-xs text-slate-500">{session.user?.email}</p>
+                      <p className="font-semibold text-slate-800">{displayName || 'Your account'}</p>
                     </div>
                   </div>
                   <Link
-                    href="/dashboard"
+                    href="/auctions"
                     className="block px-4 py-4 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <LayoutDashboard className="inline w-5 h-5 mr-3" />
-                    Dashboard
+                    <Gavel className="inline w-5 h-5 mr-3" />
+                    Auction
                   </Link>
                   <button
                     onClick={() => {
                       setIsMenuOpen(false)
-                      signOut()
+                      signOut({ callbackUrl: '/' })
                     }}
                     className="block w-full text-left px-4 py-4 rounded-xl text-red-600 hover:bg-slate-50 font-medium transition-colors"
                   >
@@ -211,13 +225,14 @@ export default function Navbar() {
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+                <Link
+                  href="/auth/signin"
                   className="btn-primary w-full flex items-center justify-center gap-2"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   <User className="w-4 h-4" />
                   Login
-                </button>
+                </Link>
               )}
             </div>
           </div>

@@ -10,6 +10,7 @@ import {
   TrendingUp, Calendar, ArrowUpRight, Sparkles, LogOut, Wallet, PieChart, Eye, Menu, Navigation, MapPin
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
+import Loader from '@/components/ui/Loader';
 
 type DashboardTab = 'dashboard' | 'tracking' | 'live' | 'payments' | 'budget' | 'documents' | 'notifications' | 'settings';
 
@@ -314,15 +315,7 @@ export default function DashboardPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-primary-100 rounded-full animate-pulse" />
-            <Loader2 className="w-8 h-8 animate-spin text-primary-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-          </div>
-          <p className="mt-4 text-sm text-gray-500 font-medium">Loading your dashboard...</p>
-        </div>
-      </div>
+      <Loader label="Loading dashboard" />
     );
   }
 

@@ -25,6 +25,7 @@ import {
   Clipboard
 } from 'lucide-react'
 import Link from 'next/link'
+import Loader from '@/components/ui/Loader';
 
 const ADMIN_EMAIL = 'groupvaleron@gmail.com'
 
@@ -145,9 +146,7 @@ export default function UserDashboardView() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
-      </div>
+      <Loader label="Loading user" />
     )
   }
 
