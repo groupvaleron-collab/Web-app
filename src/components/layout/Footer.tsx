@@ -78,9 +78,8 @@ export default function Footer() {
               {[
                 { name: 'Home', href: '/' },
                 { name: 'Vehicle Stock', href: '/stocks' },
-                { name: 'Import Calculator', href: '/calculator' },
-                { name: 'Customer Reviews', href: '/reviews' },
-                { name: 'Client Dashboard', href: '/dashboard' },
+                // Reviews is hidden while that page is being finished.
+                { name: 'Auction', href: '/auctions' },
               ].map((link) => (
                 <li key={link.name}>
                   <Link 

@@ -95,7 +95,7 @@ export default function HeroSection() {
                 <span>Browse Stock</span>
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link href="/calculator" className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-xl sm:rounded-2xl border border-slate-200 hover:border-slate-900/50 transition-all duration-300 shadow-sm text-sm sm:text-base">
+              <Link href="/#contact" className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-xl sm:rounded-2xl border border-slate-200 hover:border-slate-900/50 transition-all duration-300 shadow-sm text-sm sm:text-base">
                 <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-slate-800" />
                 Get Quote
               </Link>

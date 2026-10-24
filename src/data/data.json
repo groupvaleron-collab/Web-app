@@ -1,6 +1,87 @@
 {
   "vehicles": [
     {
+      "id": "AU-101",
+      "brand": "Toyota",
+      "model": "Yaris X",
+      "year": 2025,
+      "mileage": 8400,
+      "transmission": "Automatic",
+      "fuelType": "Petrol",
+      "images": [
+        "https://images.unsplash.com/photo-1749058983469-11eaef8d7bc5?w=800",
+        "https://images.unsplash.com/photo-1749058982846-c30cf5cad13a?w=800"
+      ],
+      "importStatus": "available",
+      "receivedStatus": "auction",
+      "engineCapacity": "1.0L",
+      "color": "Super White",
+      "grade": "4.5",
+      "features": ["Toyota Safety Sense", "Smart Key", "Reverse Camera", "LED Headlamps"],
+      "estimatedArrival": "2027-01-15",
+      "description": "Upcoming auction car — economical Toyota Yaris X, auction grade 4.5. We can bid on it for you."
+    },
+    {
+      "id": "AU-102",
+      "brand": "Toyota",
+      "model": "C-HR Hybrid G",
+      "year": 2024,
+      "mileage": 15200,
+      "transmission": "Automatic",
+      "fuelType": "Hybrid",
+      "images": [
+        "https://images.unsplash.com/photo-1564844180656-9eafb70b51c5?w=800"
+      ],
+      "importStatus": "available",
+      "receivedStatus": "auction",
+      "engineCapacity": "1.8L",
+      "color": "Black Mica",
+      "grade": "5",
+      "features": ["Adaptive Cruise Control", "Blind Spot Monitor", "Heated Seats", "Wireless Charging"],
+      "estimatedArrival": "2027-01-20",
+      "description": "Upcoming auction car — stylish Toyota C-HR hybrid crossover, auction grade 5, one owner."
+    },
+    {
+      "id": "AU-103",
+      "brand": "Toyota",
+      "model": "Hiace KDH GL",
+      "year": 2024,
+      "mileage": 21000,
+      "transmission": "Automatic",
+      "fuelType": "Diesel",
+      "images": [
+        "https://images.unsplash.com/photo-1650807486050-a142ea418b19?w=800"
+      ],
+      "importStatus": "available",
+      "receivedStatus": "auction",
+      "engineCapacity": "2.8L",
+      "color": "White Pearl",
+      "grade": "4.5",
+      "features": ["10 Seats", "Power Sliding Door", "Rear Air Conditioning", "Toyota Safety Sense"],
+      "estimatedArrival": "2027-02-05",
+      "description": "Upcoming auction van — Toyota Hiace GL, ideal for family or business use, auction grade 4.5."
+    },
+    {
+      "id": "AU-104",
+      "brand": "Suzuki",
+      "model": "Escudo Hybrid",
+      "year": 2025,
+      "mileage": 3500,
+      "transmission": "Automatic",
+      "fuelType": "Hybrid",
+      "images": [
+        "https://images.unsplash.com/photo-1576803636200-489c0e6b8147?w=800"
+      ],
+      "importStatus": "available",
+      "receivedStatus": "auction",
+      "engineCapacity": "1.5L",
+      "color": "Granite Grey",
+      "grade": "S",
+      "features": ["AllGrip 4WD", "360° Camera", "Head-Up Display", "Panoramic Sunroof"],
+      "estimatedArrival": "2027-01-28",
+      "description": "Upcoming auction car — nearly new Suzuki Escudo strong hybrid SUV, auction grade S."
+    },
+    {
       "id": "S",
       "brand": "Toyota",
       "model": "Raize Hybrid Z",
@@ -293,7 +374,7 @@
   ],
   "filterOptions": {
     "brands": ["Toyota", "Honda", "Nissan", "Mazda", "Suzuki", "Mitsubishi", "Subaru", "Lexus", "BMW", "Mercedes-Benz"],
-    "years": [2024, 2023, 2022, 2021, 2020, 2019, 2018],
+    "years": [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018],
     "transmissions": ["Automatic", "Manual"],
     "fuelTypes": ["Petrol", "Diesel", "Hybrid", "Electric"],
     "priceRanges": [

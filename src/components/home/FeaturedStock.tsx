@@ -50,23 +50,26 @@ export default function FeaturedStock() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-10 sm:mt-12 md:mt-16 p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-r from-slate-100 to-slate-100 border border-slate-300">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
-            <div className="text-center sm:text-left">
-              <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-800 mb-1 sm:mb-2">
-                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="font-semibold text-sm sm:text-base">Can't find what you're looking for?</span>
+        <div className="mt-10 sm:mt-12 md:mt-16 p-5 sm:p-6 md:px-8 rounded-2xl bg-slate-50 border border-slate-200">
+          {/* Phone: stacked, the button full width. Tablet and up: one row, the button on the right. */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+            <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
+              <span className="shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white border border-slate-200 grid place-items-center text-slate-800">
+                <Sparkles className="w-5 h-5" />
+              </span>
+              <div className="min-w-0">
+                <p className="font-semibold text-slate-900 text-base">Can&apos;t find what you&apos;re looking for?</p>
+                <p className="text-slate-600 text-sm sm:text-base mt-0.5">
+                  Request a specific vehicle from Japanese auctions and we&apos;ll find it for you.
+                </p>
               </div>
-              <p className="text-slate-600 text-xs sm:text-sm md:text-base">
-                Request a specific vehicle from Japanese auctions and we'll find it for you.
-              </p>
             </div>
-            <Link 
-              href="/calculator" 
-              className="btn-primary whitespace-nowrap text-sm sm:text-base py-2.5 sm:py-3 px-4 sm:px-6"
+            <Link
+              href="/#contact"
+              className="btn-primary shrink-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm sm:text-base py-3 px-5 sm:px-6"
             >
               Request Vehicle
-              <ArrowRight className="w-4 h-4 ml-2" />
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>

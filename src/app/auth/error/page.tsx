@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { AlertTriangle, Car, ArrowLeft } from 'lucide-react'
 import { Suspense } from 'react'
+import Loader from '@/components/ui/Loader';
 
 function ErrorContent() {
   const searchParams = useSearchParams()
@@ -29,6 +30,9 @@ function ErrorContent() {
         return 'Error during the authentication callback.'
       case 'OAuthAccountNotLinked':
         return 'This email is already linked to another account. Please sign in with the original method.'
+      case 'CredentialsSignin':
+      case 'LinkExpired':
+        return 'Your sign-in link has expired or was replaced with a newer one. Ask us for a fresh link.'
       case 'SessionRequired':
         return 'You must be signed in to access this page.'
       default:
@@ -85,9 +89,7 @@ function ErrorContent() {
 
 function ErrorLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100 flex items-center justify-center p-4">
-      <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-600 rounded-full animate-spin" />
-    </div>
+    <Loader />
   )
 }
 
